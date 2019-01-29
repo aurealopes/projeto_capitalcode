@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <title>Projeto Capital Code</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/form.css">
+    <!-- cdn -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
+        crossorigin="anonymous">
 </head>
 
 <body>
@@ -16,15 +20,24 @@
         <form>
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
-                    placeholder="Insira o seu e-mail">                
+                <p class="text-danger hide-p" id="alert-tamanho-caracter"><br><i class="fa fa-exclamation-triangle"
+                        aria-hidden="true"></i>
+                    O seu e-mail deve conter mais de 5 caracteres</p>
+                <p class="text-danger hide-p" id="alert-arroba-caracter"><br><i class="fa fa-exclamation-triangle"
+                        aria-hidden="true"></i>
+                    Você deve inserir um e-mail válido</p>
+                <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Insira o seu e-mail"
+                    onblur="validaEmail('email')">
             </div>
             <div class="form-group">
                 <label for="senha">Senha</label>
-                <input type="password" class="form-control" id="senha" placeholder="Insira a sua senha">
+                <p class="text-danger hide-p" id="alert-tamanho-caracter-senha"><br><i class="fa fa-exclamation-triangle"
+                        aria-hidden="true"></i>
+                    A sua senha deve conter mais de 5 caracteres</p>
+                <input type="password" class="form-control" id="senha" placeholder="Insira a sua senha" onblur="validaSenha('senha')">
             </div>
             <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="verSenha">
+                <input type="checkbox" class="form-check-input" id="verSenha" onchange="mostraSenha('senha', 'verSenha')">
                 <label class="form-check-label" for="exampleCheck1">Ver senha</label>
             </div>
             <button type="submit" class="btn btn-primary">Enviar</button>
@@ -33,6 +46,7 @@
     </div>
 
     <!-- <script src="js/bootstrap.js"></script> -->
+    <script src="js/validaForm.js"></script>
 </body>
 
 </html>
