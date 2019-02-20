@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Jquery HTML JS</title>
+</head>
+
+<body onload="muda_texto()">
+
+    <div id="txt" >Um texto qualquer</div>
+    <div class="txt-classe">Um texto qualquer</div>
+
+    <script>
+
+        function muda_texto() {
+
+            // console.log(document.getElementById("txt").innerHTML = "Este é um novo texto");
+            // console.log($('#txt').html('este é um novo texto'));
+
+            // console.log(document.getElementsByClassName('txt-classe'));
+            // console.log($('.txt-classe'));
+
+            // var elements_js = document.getElementsByClassName('txt-classe');
+            // console.log(elements_js);
+
+            // for(k in elements_js){
+            //     // console.log(elements_js[k]);
+            //     elements_js[k].innerHTML = "txt na posição k = " + k;
+            // }
+
+            var elements_jquery = $('.txt-classe')
+            // console.log(elements_jquery);
+
+            for(k in elements_jquery){
+                // console.log(elements_jquery[k]);
+                elements_jquery.eq(k).html("txt na posição k = " + k);
+            }
+        }
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+</body>
+
+</html>
