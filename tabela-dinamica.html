@@ -23,9 +23,12 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th scope="col">ID</th>
                     <th scope="col">Nome</th>
                     <th scope="col">Email</th>
                     <th scope="col">Data de Nascimento</th>
+                    <th scope="col">Atualizar</th>
+                    <th scope="col">Remover</th>
                 </tr>
             </thead>
             <tbody id="tbody-table">
@@ -35,7 +38,7 @@
         </table>
 
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
-            data-whatever="@mdo">Adicionar</button>        
+            data-whatever="@mdo">Adicionar</button>
 
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
@@ -59,34 +62,174 @@
                             </div>
                             <div class="form-group">
                                 <label for="message-text" class="col-form-label">Data de Nascimento:</label>
-                                <input type="date" class="form-control" id="dt_nasc">
+                                <input type="date" class="form-control" id="data_nasc">
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                        <button onclick="adiciona_usuario()" type="button" class="btn btn-primary">Enviar</button>
+                        <button onclick="adiciona_usuario()" type="button" class="btn btn-primary"
+                            data-dismiss="modal">Enviar</button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="modal fade" id="exampleModal-update" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Novo usuário</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Nome:</label>
+                                <input type="text" class="form-control" id="nome-update">
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Email:</label>
+                                <input type="email" class="form-control" id="email-update">
+                            </div>
+                            <div class="form-group">
+                                <label for="message-text" class="col-form-label">Data de Nascimento:</label>
+                                <input type="date" class="form-control" id="data_nasc-update">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary atualizar-bd" data-dismiss="modal">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://www.gstatic.com/firebasejs/5.8.3/firebase.js"></script>
         <script src="js/jquery.min.js"></script>
         <script src="js/validaForm.js"></script>
 
 
-        <script>            
+        <script>
+
+            var key = 0;
+            var key_usuario_acionado = 0;
 
             function adiciona_usuario() {
                 var nome = $("#nome").val();
                 var email = $("#email").val();
-                var dataNascimento = $("#dt_nasc").val();
+                var data_nasc = $("#data_nasc").val();
 
-                $("#tbody-table").append("<tr>" +
-                                        "<th scope='row'>" + nome + "</th>" +
-                                        "<td>" + email + "</td>" +
-                                        "<td>" + dataNascimento + "</td>" +
-                                        " </tr>");
+                adicionar_usuario_db(nome, email, data_nasc, key);
+
+            }
+
+            function set_key_usuario_acionado(id) {
+                key_usuario_acionado = id;
+            }
+
+            function update_usuario(parametro, id = 0) {
+
+                if (parametro == 0) {
+
+                    seleciona_usuario_db(id);
+                    set_key_usuario_acionado(id);
+
+                }
+                if (parametro == 1) {
+
+                    var nome = $("#nome-update").val();
+                    var email = $("#email-update").val();
+                    var data_nasc = $("#data_nasc-update").val();
+                    adicionar_usuario_db(nome, email, data_nasc, key_usuario_acionado);
+
+                    $("#usuario-" +key_usuario_acionado).html(
+                        "<th scope='row'>" + key_usuario_acionado + "</th>" +
+                        "<th scope='row'>" + nome + "</th>" +
+                        "<td>" + email + "</td>" +
+                        "<td>" + data_nasc + "</td>" +
+                        "<td><button onclick='update_usuario(0, " + key_usuario_acionado + ")' type='button' class='btn btn-primary' data-toggle='modal' data-target='#exampleModal-update'>Atualizar</button></td>" +
+                        "<td><button onclick='remove_usuario(" + key_usuario_acionado + ")' type='button' class='btn btn-danger'>Remover</button></td>" 
+                        );
+
+                    key++;
+
+                }
+            }
+
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyDH3UFLMomD89so3lcxJDxB6PmIdUUgDMI",
+                authDomain: "curso-js-72e50.firebaseapp.com",
+                databaseURL: "https://curso-js-72e50.firebaseio.com",
+                projectId: "curso-js-72e50",
+                storageBucket: "curso-js-72e50.appspot.com",
+                messagingSenderId: "1005305003179"
+            };
+
+            firebase.initializeApp(config);
+            var database = firebase.database();
+
+            function adicionar_usuario_db(nome, email, data_nasc, key) {
+
+                database.ref('usuarios/' + key).set({
+                    nome: nome,
+                    email: email,
+                    data_nasc: data_nasc
+
+                });
+            }
+
+            function seleciona_usuario_db(id) {
+
+                database.ref('usuarios/' + id).once("value").then(function (snapshot) {
+                    var db_usuario_val = (snapshot.val());
+
+                    //SELECIONAR OS DADOS DO USUÁRIO
+                    $('#nome-update').val(db_usuario_val.nome);
+                    $('#email-update').val(db_usuario_val.email);
+                    $('#data_nasc-update').val(db_usuario_val.data_nasc);
+                });
+            }
+
+
+            database.ref('usuarios').on('child_added', function (data) {
+
+                var data_db = data.val();
+
+                adiciona_usuario_tb(data_db.nome, data_db.email, data_db.data_nasc)
+            })
+
+
+
+            function adiciona_usuario_tb(nome, email, data_nasc) {
+
+                $("#tbody-table").append("<tr id='usuario-" + key + "'>" +
+                    "<th scope='row'>" + key + "</th>" +
+                    "<th scope='row'>" + nome + "</th>" +
+                    "<td>" + email + "</td>" +
+                    "<td>" + data_nasc + "</td>" +
+                    "<td><button onclick='update_usuario(0, " + key + ")' type='button' class='btn btn-primary' data-toggle='modal' data-target='#exampleModal-update'>Atualizar</button></td>" +
+                    "<td><button onclick='remove_usuario(" + key + ")' type='button' class='btn btn-danger'>Remover</button></td>" +
+                    " </tr>");
+
+                key++;
+            }
+
+            $('.atualizar-bd').on('click', function (data) {
+
+                update_usuario(1)
+
+            });
+
+            function remove_usuario(id){
+
+                database.ref("usuarios/"+id).remove();
+                $("#usuario-"+id).remove();
             }
 
 
